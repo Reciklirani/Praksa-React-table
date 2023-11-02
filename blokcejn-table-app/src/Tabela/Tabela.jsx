@@ -1,9 +1,11 @@
 import { useEffect } from "react";
 import { useState } from "react";
 import axios from "axios";
+import styles from "./tabela.css";
 
 export function Tabela() {
   const [data, setData] = useState([]);
+  const [amounts, setAmounts] = useState({});
 
   useEffect(() => {
     const fetchData = async () => {
@@ -35,15 +37,29 @@ export function Tabela() {
     return <p>Loading...</p>;
   }
 
+  const updateTotalPrice = (cryptoId, value) => {
+    setAmounts({
+      ...amounts,
+      [cryptoId]: value,
+    });
+  };
+
+  const formatTotalPrice = (price) => {
+    const formattedPrice = price.toPrecision(10);
+    return parseFloat(formattedPrice).toString();
+  };
+
   return (
     <div>
-      <table>
+      <table className="table">
         <thead>
           <tr>
             <th>Name</th>
             <th>Full Name</th>
+            <th>Amount</th>
             <th>Price (USD)</th>
             <th>Rating</th>
+            <th className="total-price-cell">Total Price</th>
           </tr>
         </thead>
         <tbody>
@@ -52,8 +68,22 @@ export function Tabela() {
               <tr key={crypto.CoinInfo.Id}>
                 <td>{crypto.CoinInfo.Name}</td>
                 <td>{crypto.CoinInfo.FullName}</td>
-                <td>{crypto.RAW.USD.PRICE}</td>
+                <td>
+                  <input
+                    type="number"
+                    onChange={(e) =>
+                      updateTotalPrice(crypto.CoinInfo.Id, e.target.value)
+                    }
+                  />
+                </td>
+                <td>{parseFloat(crypto.RAW.USD.PRICE).toPrecision(8)}</td>
                 <td>{crypto.CoinInfo.Rating.Weiss.Rating}</td>
+                <td>
+                  {formatTotalPrice(
+                    parseFloat(crypto.RAW.USD.PRICE) *
+                      parseFloat(amounts[crypto.CoinInfo.Id] || 0)
+                  )}
+                </td>
               </tr>
             ))}
         </tbody>
