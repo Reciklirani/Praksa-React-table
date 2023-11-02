@@ -1,9 +1,9 @@
 import { useEffect } from "react";
 import { useState } from "react";
 import axios from "axios";
-import styles from "./tabela.css";
+import styles from "./table.css";
 
-export function Tabela() {
+export function Table() {
   const [data, setData] = useState([]);
   const [amounts, setAmounts] = useState({});
 
@@ -14,15 +14,12 @@ export function Tabela() {
           "https://min-api.cryptocompare.com/data/top/totalvolfull?limit=10&tsym=USD",
           {
             headers: {
-              Authorization:
-                "Apikey 12ca21d417cdbb777b5d950aae8cce8b4829d819f222dc0c6f6b217a9e0ffe2b",
+              Authorization: `Apikey ${process.env.REACT_APP_CRYPTO_COMPARE_API_KEY}`,
             },
           }
         );
         if (response.status == 200) {
-          // const data = response.data.Data;
           setData(response.data.Data);
-          console.log(response.data);
         } else {
           throw new Error("Request was not successful");
         }
